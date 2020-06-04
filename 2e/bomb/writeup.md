@@ -488,7 +488,7 @@ esp            0xffffd174          0xffffd174
 0x804c4d0 <input_strings+240>:  "12 3"
 ```
 
-回到`phase_defused`，调用了`strings_not_equal`。通过`gdb`查看内存地址`0x804a1d2`对应字符串`"DrEvil"`。故输入模式的第三个位置应为`"DrEvil"`。将phase_4的题解改为`"12 3 DrEvil"`并运行，可以看到提示`"Curses, you've found the secret phase! But finding it and solving it are quite different..."`。成功进入`secret_phase`。
+回到`phase_defused`，调用了`strings_not_equal`。通过`gdb`查看内存地址`0x804a1d2`对应字符串`"DrEvil"`。故输入模式的第三个位置应为`"DrEvil"`。将`phase_4`的题解改为`"12 3 DrEvil"`并运行，可以看到提示`"Curses, you've found the secret phase! But finding it and solving it are quite different..."`。成功进入`secret_phase`。
 
 ```asm
  804923a:	68 d2 a1 04 08       	push   $0x804a1d2 ; "DrEvil"
@@ -501,7 +501,7 @@ esp            0xffffd174          0xffffd174
 
 ```asm
  8048eb6:	e8 42 02 00 00       	call   80490fd <read_line>
- 8048ebb:波明白	83 ec 04             	sub    $0x4,%esp
+ 8048ebb:	83 ec 04             	sub    $0x4,%esp
  8048ebe:	6a 0a                	push   $0xa
  8048ec0:	6a 00                	push   $0x0
  8048ec2:	50                   	push   %eax
@@ -513,34 +513,34 @@ esp            0xffffd174          0xffffd174
  8048ee5:	e8 77 ff ff ff       	call   8048e61 <fun7>
  8048eea:	83 c4 10             	add    $0x10,%esp
  8048eed:	83 f8 05             	cmp    $0x5,%eax ; fun7(tree,line)==5
- 8048ef0:	74 05                	je     8048ef7 <secret_phasWe+0x45>
+ 8048ef0:	74 05                	je     8048ef7 <secret_phase+0x45>
  8048ef2:	e8 a6 01 00 00       	call   804909d <explode_bomb>
 ```
 
 `fun7`的第一个参数为内存地址`0x804c088`。查看该处内存，很明显是一颗完全二叉树。其值整理成表格如下。
 
-| ADDR                                       | val(+0)    | left(+4)   | right(+8)  |
-| ------------------------------------------ | ---------- | ---------- | ---------- |
-| 0x0804c088 <n1>:                           | 0x00000024 | 0x0804c094 | 0x0804c0a0 |
-| 0x0804c094 <n21>:                          | 0x00000008 | 0x0804c0c4 | 0x0804c0ac |
-| 0x0804c0a0 <n22>:                          | 0x00000032 | 0x0804c0b8 | 0x0804c0d0 |
-| 0x0804c0ac <n32>:                          | 0x00000016 | 0x0804c118 | 0x0804c100 |
-| 0x0804c0b8 <n33>:git push -u origin master | 0x0000002d | 0x0804c0dc | 0x0804c124 |
-| 0x0804c0c4 <n31>:                          | 0x00000006 | 0x0804c0e8 | 0x0804c10c |
-| 0x0804c0d0 <n34>:                          | 0x0000006b | 0x0804c0f4 | 0x0804c130 |
-| 0x0804c0dc <n45>:                          | 0x00000028 | 0x00000000 | 0x00000000 |
-| 0x0804c0e8 <n41>:                          | 0x00000001 | 0x00000000 | 0x00000000 |
-| 0x0804c0f4 <n47>:                          | 0x00000063 | 0x00000000 | 0x00000000 |
-| 0x0804c100 <n44>:                          | 0x00000023 | 0x00000000 | 0x00000000 |
-| 0x0804c10c <n42>:                          | 0x00000007 | 0x00000000 | 0x00000000 |
-| 0x0804c118 <n43>:                          | 0x00000014 | 0x00000000 | 0x00000000 |
-| 0x0804c124 <n46>:                          | 0x0000002f | 0x00000000 | 0x00000000 |
-| 0x0804c130 <n48>:                          | 0x000003e9 | 0x00000000 | 0x00000000 |
+| ADDR              | val(+0)    | left(+4)   | right(+8)  |
+| ----------------- | ---------- | ---------- | ---------- |
+| 0x0804c088 <n1>:  | 0x00000024 | 0x0804c094 | 0x0804c0a0 |
+| 0x0804c094 <n21>: | 0x00000008 | 0x0804c0c4 | 0x0804c0ac |
+| 0x0804c0a0 <n22>: | 0x00000032 | 0x0804c0b8 | 0x0804c0d0 |
+| 0x0804c0ac <n32>: | 0x00000016 | 0x0804c118 | 0x0804c100 |
+| 0x0804c0b8 <n33>: | 0x0000002d | 0x0804c0dc | 0x0804c124 |
+| 0x0804c0c4 <n31>: | 0x00000006 | 0x0804c0e8 | 0x0804c10c |
+| 0x0804c0d0 <n34>: | 0x0000006b | 0x0804c0f4 | 0x0804c130 |
+| 0x0804c0dc <n45>: | 0x00000028 | 0x00000000 | 0x00000000 |
+| 0x0804c0e8 <n41>: | 0x00000001 | 0x00000000 | 0x00000000 |
+| 0x0804c0f4 <n47>: | 0x00000063 | 0x00000000 | 0x00000000 |
+| 0x0804c100 <n44>: | 0x00000023 | 0x00000000 | 0x00000000 |
+| 0x0804c10c <n42>: | 0x00000007 | 0x00000000 | 0x00000000 |
+| 0x0804c118 <n43>: | 0x00000014 | 0x00000000 | 0x00000000 |
+| 0x0804c124 <n46>: | 0x0000002f | 0x00000000 | 0x00000000 |
+| 0x0804c130 <n48>: | 0x000003e9 | 0x00000000 | 0x00000000 |
 
 进入`fun7`。可以看到此处出现了分支结构和递归调用。
 
 ```asm
-08048e61 <fun7>:git push -u origin master
+08048e61 <fun7>:
  8048e61:	53                   	push   %ebx
  8048e62:	83 ec 08             	sub    $0x8,%esp
  8048e65:	8b 54 24 10          	mov    0x10(%esp),%edx; tree (ptr)
@@ -596,7 +596,7 @@ int fun7(Node* node, int input) {
 ```
 $ ./bomb ans.txt 
 Welcome to my fiendish little bomb. You have 6 phases with
-which to blow yourself up. Have a nice day!
+which to blow yourself up. Have a nice day!thub Action to publish an AUR package 
 Phase 1 defused. How about the next one?
 That's number 2.  Keep going!
 Halfway there!
